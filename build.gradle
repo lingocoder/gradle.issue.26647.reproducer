@@ -22,31 +22,23 @@ repositories {
 sourceSets {
     intTest {
         compileClasspath += sourceSets.main.output
-        runtimeClasspath += sourceSets.main.output
+	runtimeClasspath += sourceSets.main.output
     }
 }
 
 configurations {
-    intTestImplementation.extendsFrom implementation
+    intTestImplementation.extendsFrom testImplementation
     intTestRuntimeOnly.extendsFrom runtimeOnly
 }
 
 dependencies {
-    // This dependency is exported to consumers, that is to say found on their compile classpath.
-    api 'org.apache.commons:commons-math3:3.6.1'
-
-    // This dependency is used internally, and not exposed to consumers on their own compile classpath.
-    implementation 'com.google.guava:guava:28.1-jre'
-
     // Use JUnit Jupiter API for testing.
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.1'
 
     // Use JUnit Jupiter Engine for testing.
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
-
-    intTestImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'
-    intTestRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
-
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.1'
+    intTestImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
+    intTestRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.7.1'
 }
 
 test {
@@ -54,13 +46,25 @@ test {
     useJUnitPlatform()
 }
 
-task integrationTest(type: Test) {
+tasks.register('integrationTest', Test) {
+
     description = 'Runs integration tests.'
     group = 'verification'
 
     testClassesDirs = sourceSets.intTest.output.classesDirs
     classpath = sourceSets.intTest.runtimeClasspath
     shouldRunAfter test
+
+    useJUnitPlatform()
+
+    testLogging {
+        events "passed"
+    }
 }
 
 check.dependsOn integrationTest
+
+buildScan {
+    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+    termsOfServiceAgree = 'yes'
+}

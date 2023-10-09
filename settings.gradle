@@ -7,4 +7,7 @@
  * in the user manual at https://docs.gradle.org/6.1-20191201230023+0000/userguide/multi_project_builds.html
  */
 
-rootProject.name = 'no.tests.found.reproducer'
+plugins {
+    id "com.gradle.enterprise" version "3.15.1"
+}
+rootProject.name = 'no.tests.found.reproducer.gradle.v8.4'
